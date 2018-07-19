@@ -1,0 +1,116 @@
+<beans xmlns="http://www.springframework.org/schema/beans"    
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"   
+    xmlns:p="http://www.springframework.org/schema/p"  
+    xmlns:aop="http://www.springframework.org/schema/aop"   
+    xmlns:context="http://www.springframework.org/schema/context"  
+    xmlns:jee="http://www.springframework.org/schema/jee"  
+    xmlns:tx="http://www.springframework.org/schema/tx"  
+    xmlns:task="http://www.springframework.org/schema/task"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd ">    
+	
+	
+	<context:component-scan base-package="com.cncg.service" />
+	<context:component-scan base-package="com.cncg.quartz" />
+	<context:component-scan base-package="com.cncg.dao" />
+	<!-- 加载定时任务 -->
+	<task:annotation-driven/>
+    
+    <!-- 引入JDBC配置文件 -->
+    <bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location" value="classpath:jdbc.properties" />
+	</bean>
+    <!-- 配置数据源 -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close" 
+		p:driverClassName="${jdbc.driverClassName}"
+		p:url="${jdbc.url}" 
+		p:username="${jdbc.username}"
+		p:password="${jdbc.password}" />
+		
+		
+    <!-- 计划任务配置，用 @Service @Lazy(false)标注类，用@Scheduled(cron = "0 0 2 * * ?")标注方法 -->
+    <!-- <task:executor id="executor" pool-size="10"/> <task:scheduler id="scheduler" pool-size="10"/>
+    <task:annotation-driven scheduler="scheduler" executor="executor" proxy-target-class="true"/>
+	<task:scheduled-tasks>
+		备份数据时间间隔30min
+		<task:scheduled ref="sysTask" method="backUp" cron="0 0/1 * * * ?"/>
+	</task:scheduled-tasks> -->
+	
+    <!-- Mybatis 配置开始 -->
+    
+    <!-- 配置mybatis的sqlSessionFactory -->
+	<!-- <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		自动扫描mappers.xml文件
+		<property name="mapperLocations" value="classpath:com/cncg/mappers/*.xml"></property>
+		mybatis配置文件
+		<property name="configLocation" value="classpath:mybatis-config.xml"></property>
+	</bean> -->
+	
+	<!-- DAO接口所在包名，Spring会自动查找其下的类 -->
+	<!-- <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.cncg.dao" />
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
+	</bean> -->
+	<!-- 配置事务管理器 -->
+	<!-- <bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+		p:dataSource-ref="dataSource" /> -->
+		
+    <!-- Mybatis 配置结束 -->
+    
+	<!--  Hibernate 配置开始 -->
+	
+	<!-- 定义Hibernate Session工厂 -->
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean"> 
+        <property name="dataSource" ref="dataSource"/>
+        <!-- 使用实体注解方式 -->
+        <property name="packagesToScan" value="com.cncg"/><!-- 如果多个，用“,”分隔 -->
+        <!-- <property name="configLocation" value="classpath:hibernate.cfg.xml"></property> 测试-->
+        <property name="hibernateProperties">
+            <props>
+                <!-- <prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</prop>
+                <prop key="net.sf.ehcache.configurationResourceName">${hibernate.ehcache.configFile}</prop>
+                <prop key="hibernate.cache.use_second_level_cache">true</prop>
+                <prop key="hibernate.cache.use_query_cache">true</prop>
+                <prop key="hibernate.search.default.directory_provider">filesystem</prop>
+                <prop key="hibernate.search.default.indexBase">${hibernate.search.default.indexBase}</prop> -->
+                <prop key="hibernate.hbm2ddl.auto">update</prop>    <!--hibernate根据实体自动生成数据库表-->
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>   <!--指定数据库方言-->
+                <!-- <prop key="hibernate.show_sql">true</prop> -->          <!--在控制台显示执行的数据库操作语句-->
+                <!-- <prop key="hibernate.format_sql">true</prop> -->       <!--在控制台显示执行的数据库操作语句（格式）-->
+                <prop key="hibernate.use_sql_comments">true</prop> <!-- 使SQL语句中自动注入注释，增加可读性 -->
+            </props>
+        </property>
+        <property name="namingStrategy">
+            <!-- <bean class="org.hibernate.cfg.ImprovedNamingStrategy" /> userID > user_Id -->
+            <bean class="org.hibernate.cfg.DefaultNamingStrategy" />
+        </property>
+        <!-- <property name="mappingLocations"> 
+    		<value>classpath:/com/cncg/entity/*.hbm.xml </value> 
+		</property>  -->
+		<property name="mappingDirectoryLocations">
+	  		<list>
+	 			<value>classpath:/com/cncg/</value>
+	  		</list>
+		</property>
+    </bean>
+       
+    <!-- 定义事务 -->
+    <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">  
+        <property name="sessionFactory" ref="sessionFactory" />  
+    </bean>
+    
+	<!-- Hibernate 配置结束 -->
+	
+	<!-- 配置 Annotation 驱动，扫描@Transactional注解的类定义事务  -->
+	<tx:annotation-driven  transaction-manager="transactionManager" proxy-target-class="true"/>
+	
+</beans>

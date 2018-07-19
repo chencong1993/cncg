@@ -1,0 +1,45 @@
+重点：hibernate freeMark vue
+
+6月7月
+1.hibernate	****
+2.cxf		***
+3.freeMark 页面模版框架	**
+8月半
+4.Highcharts
+5.Ehcache缓存 场景: 直接在jvm虚拟机中缓存，速度快，效率高；但是缓存共享麻烦，集群分布式应用不方便。
+6.Maven3
+7.log4j
+8月9月
+8.activiti	**
+9.Shiro		**
+10.poi
+11.itext
+十月以前
+12.java base java/javascript正则表达式
+13.javascript
+14.(MYSQL/ORACEL/SQLSERVER) SQL
+十二月以前
+/*****************************************************/
+15.SpringBoot	**
+16.ActiveMQ		
+17.redis Key-Value数据库[支持多种数据结构,只能使用单线程]， 场景: 通过socket访问到缓存服务，效率比ecache低，比数据库要快很多，处理集群和分布式缓存方便，有成熟的方案。
+  微信小程序
+/*****************************************************/
+18.MongoDB 分布式文件存储的数据库[内存型数据库,NoSQL非关系型数据库]， 场景: 主要解决海量数据的访问效率问题
+*18.1.Memcached 分布式内存对象缓存系统
+*18.2.Memcache 分布式的高速缓存系统数据结构单一 [ehcache最简单，memcache依赖多，redis支持的数据类型多]
+19.vue 前端MVVM框架			**
+20.Linux Centos shell	** Xshell 5
+三月以前
+21.Lucene5	搜索引擎
+22.ElasticSearch 分布式搜索服务器
+*23.JFreeChart java图表绘制类库
+24.Dubbo 分布式服务框架
+25.spring clud	**
+26.MyCat 数据库中间件		**
+27.HttpClient
+28.HtmlUnit
+29.Executor多线程框架
+30.Jsoup HTML解析器
+31.spring data jpa
+32.Hadoop 分布式系统基础架构

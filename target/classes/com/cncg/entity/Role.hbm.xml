@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="com.cncg.entity">
+
+	<class name="Role" table="t_role" dynamic-update="true" dynamic-insert="true">
+		<id name="roleId" column="roleId">
+			<generator class="native"></generator>
+		</id>
+		
+		<property name="roleName"></property>
+		<property name="menuIds"></property>
+		<property name="roleDescription"></property>
+	</class>
+
+</hibernate-mapping>
